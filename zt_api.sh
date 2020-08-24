@@ -1,3 +1,4 @@
+#!/bin/bash
 zt_api() {
     # Clear out any previously set variables
     unset zt_api_url zt_api_key zt_list zt_net_id zt_dev_id zt_api_results zt_api_payload zt_api_request zt_status zt_self zt_token zt_user_id
@@ -20,9 +21,6 @@ zt_api() {
             * ) break ;;
         esac
     done
-
-    # Set default value if not set
-    if [ -z "$zt_api_key" ]; then zt_api_key="${ZT_API_KEY//[^a-zA-Z0-9]/}"; fi
 
     # Configure URL
     zt_api_url=$ZT_API_URL
@@ -64,6 +62,22 @@ zt_api() {
         zt_api_results=$(eval $zt_api_cmd 2>/dev/null | jq --compact-output -r "$zt_api_request")
         if [ -z "$zt_api_results" ]; then return 0; else echo "$zt_api_results"; fi
     fi
+}
+
+# Examples
+zt_authorize() {
+    zt_api -n -m -p '{"config":{"authorized":true}}'
+}
+zt_add_tags() {
+    zt_new_tags=""
+    zt_tags=($(zt_api -n -m -r .config.tags[] 2>/dev/null))
+    for t in "${zt_tags[@]}"; do 
+        if [[ ! "$zt_new_tags" == *"\"$t\","* ]]; then zt_new_tags+="\"$t\","; fi
+    done
+    for t in $@; do 
+        if [[ ! "$zt_new_tags" == *"\"$t\","* ]]; then zt_new_tags+="\"$t\","; fi
+    done
+    zt_api -n -m -p '{"config":{"tags":['${zt_new_tags%?}']}}'
 }
 
 zt_api $@
