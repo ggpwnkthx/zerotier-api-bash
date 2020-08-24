@@ -24,6 +24,7 @@ zt_api() {
 
     # Configure URL
     zt_api_url=$ZT_API_URL
+    if [ -z "$zt_api_url" ]; then zt_api_url="https://my.zerotier.com/api"; fi
     if [ ! -z "$zt_status" ]; then
         zt_api_url+="/status"
     elif [ ! -z "$zt_self" ] ; then
