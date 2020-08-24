@@ -4,6 +4,9 @@ Simple BASH script that forwards requests to the Zerotier API via curl and jq.
 ## Prerequisites
 curl and jq
 
+## ToDo
+Add support for deleting objects.
+
 ## Options
     -k ) Zerotier API Key (required, default:$ZT_API KEY)
     -l ) List [network|member|user]
